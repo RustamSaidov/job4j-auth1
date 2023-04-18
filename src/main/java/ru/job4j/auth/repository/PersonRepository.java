@@ -14,7 +14,7 @@ public interface PersonRepository extends CrudRepository<Person, Integer> {
     default Person findByUsername(String username){
         List<Person> list = findAll();
         return list.stream()
-                .filter(p -> p.getLogin().equals("нужный_username"))
+                .filter(p -> p.getLogin().equals(username))
                 .findFirst().get();
     }
 }
