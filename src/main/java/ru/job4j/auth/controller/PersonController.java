@@ -3,17 +3,18 @@ package ru.job4j.auth.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import ru.job4j.auth.model.Person;
 import ru.job4j.auth.service.PersonService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -26,7 +27,7 @@ public class PersonController {
     private static final Logger LOGGER = LoggerFactory.getLogger(PersonController.class.getSimpleName());
     private final ObjectMapper objectMapper;
 
-    public PersonController( PersonService persons, BCryptPasswordEncoder encoder, ObjectMapper objectMapper) {
+    public PersonController(PersonService persons, BCryptPasswordEncoder encoder, ObjectMapper objectMapper) {
         this.persons = persons;
         this.encoder = encoder;
         this.objectMapper = objectMapper;
@@ -45,7 +46,6 @@ public class PersonController {
     }
      */
 
-
     @GetMapping("/{id}")
     public ResponseEntity<Person> findById(@PathVariable int id) {
         var person = this.persons.findById(id);
@@ -54,13 +54,6 @@ public class PersonController {
                 person.isPresent() ? HttpStatus.OK : HttpStatus.NOT_FOUND
         );
     }
-
-//    @PostMapping("/sign-up")
-//    public ResponseEntity<Person> create(@RequestBody Person person) {
-//        return new ResponseEntity<Person>(this.persons.save(person),
-//                HttpStatus.CREATED
-//        );
-//    }
 
     @PostMapping("/sign-up")
     public void signUp(@RequestBody Person person) {
@@ -74,8 +67,6 @@ public class PersonController {
         person.setPassword(encoder.encode(person.getPassword()));
         persons.save(person);
     }
-
-
 
     @PutMapping("/")
     public ResponseEntity<Void> update(@RequestBody Person person) {
@@ -97,18 +88,18 @@ public class PersonController {
         }
     }
 
-    @ExceptionHandler(value = { IllegalArgumentException.class })
+    @ExceptionHandler(value = {IllegalArgumentException.class})
     public void exceptionHandler(Exception e, HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setStatus(HttpStatus.BAD_REQUEST.value());
         response.setContentType("application/json");
-        response.getWriter().write(objectMapper.writeValueAsString(new HashMap<>() { {
-            put("message", e.getMessage());
-            put("type", e.getClass());
-        }}));
+        response.getWriter().write(objectMapper.writeValueAsString(new HashMap<>() {
+            {
+                put("message", e.getMessage());
+                put("type", e.getClass());
+            }
+        }));
         LOGGER.error(e.getLocalizedMessage());
     }
-
-
 
     /*GET с использованием ResponseEntity:*/
     @GetMapping
@@ -128,4 +119,15 @@ public class PersonController {
                 ));
     }
  */
+
+    /*Пример использования PATCH метода для частичного обновления данных:*/
+    @PatchMapping("/change-user")
+    public Person changePersonUsingPatchMethod(@RequestBody Person person) throws InvocationTargetException, IllegalAccessException {
+        var current = persons.findByLogin(person.getLogin());
+        if (current.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        person.setId(current.get().getId());
+        return persons.save(person);
+    }
 }

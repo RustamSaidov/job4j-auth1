@@ -8,12 +8,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @SpringBootApplication
 public class Job4jAuth1Application {
 
-	public static void main(String[] args) {
-		SpringApplication.run(Job4jAuth1Application.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(Job4jAuth1Application.class, args);
+    }
 
-	@Bean
-	public BCryptPasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 }

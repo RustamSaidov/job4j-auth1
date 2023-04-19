@@ -2,13 +2,13 @@ package ru.job4j.auth;
 
 import com.auth0.jwt.JWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ru.job4j.auth.model.Person;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import ru.job4j.auth.model.Person;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -26,7 +26,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     public static final long EXPIRATION_TIME = 864_000_000; /* 10 days */
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String HEADER_STRING = "Authorization";
-//    public static final String SIGN_UP_URL = "/users/sign-up";
+    //    public static final String SIGN_UP_URL = "/users/sign-up";
     public static final String SIGN_UP_URL = "/person/sign-up";
 
     private AuthenticationManager auth;
