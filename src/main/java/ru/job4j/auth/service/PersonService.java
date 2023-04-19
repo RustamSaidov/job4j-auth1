@@ -20,4 +20,6 @@ public interface PersonService {
     List<Person> findAll();
 
     UserDetails loadUserByUsername(String username);
+
+    Optional<Person> findByLogin(String username);
 }

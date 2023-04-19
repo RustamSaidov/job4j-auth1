@@ -49,10 +49,15 @@ public class SimplePersonService implements PersonService, UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Person person = personRepository.findByUsername(username);
-        if (person == null) {
+        var person = personRepository.findByUsername(username);
+        if (person.isEmpty()) {
             throw new UsernameNotFoundException(username);
         }
-        return new User(person.getLogin(), person.getPassword(), emptyList());
+        return new User(person.get().getLogin(), person.get().getPassword(), emptyList());
+    }
+
+    @Override
+    public Optional<Person> findByLogin(String login) {
+        return personRepository.findByUsername(login);
     }
 }
