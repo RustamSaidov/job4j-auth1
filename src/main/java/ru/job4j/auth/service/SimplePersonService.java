@@ -2,13 +2,11 @@ package ru.job4j.auth.service;
 
 import lombok.AllArgsConstructor;
 import net.jcip.annotations.ThreadSafe;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 import ru.job4j.auth.model.Person;
 import ru.job4j.auth.model.PersonCredentials;
 import ru.job4j.auth.repository.PersonRepository;
@@ -37,12 +35,14 @@ public class SimplePersonService implements PersonService, UserDetailsService {
 
     @Override
     public boolean update(PersonCredentials personDTO) {
+        boolean result = false;
         var current = personRepository.findByLogin(personDTO.getLogin());
         if (current.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            return result;
         }
-        var result = personRepository.save(new Person(current.get().getId(), personDTO.getLogin(), personDTO.getPassword(), current.get().getEmail()));
-        return result != null;
+        personRepository.save(new Person(current.get().getId(), personDTO.getLogin(), personDTO.getPassword(), current.get().getEmail()));
+        result = true;
+        return result;
     }
 
     @Override

@@ -125,9 +125,8 @@ public class PersonController {
     public boolean changePersonUsingPatchMethod(@RequestBody PersonCredentials personDTO) throws Exception {
         boolean result;
         personDTO.setPassword(encoder.encode(personDTO.getPassword()));
-        try {
-            result = persons.update(personDTO);
-        } catch (ResponseStatusException e) {
+        result = persons.update(personDTO);
+        if (!result) {
             throw new Exception("Person with this credentials is not found.");
         }
         return result;
