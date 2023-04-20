@@ -14,6 +14,7 @@ import ru.job4j.auth.service.PersonService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -56,7 +57,7 @@ public class PersonController {
     }
 
     @PostMapping("/sign-up")
-    public void signUp(@RequestBody Person person) {
+    public void signUp(@Valid @RequestBody Person person) {
         if (person.getLogin() == null || person.getPassword() == null) {
             throw new NullPointerException("login and password mustn't be empty");
         }
@@ -69,7 +70,7 @@ public class PersonController {
     }
 
     @PutMapping("/")
-    public ResponseEntity<Void> update(@RequestBody Person person) {
+    public ResponseEntity<Void> update(@Valid @RequestBody Person person) {
         try {
             this.persons.save(person);
             return ResponseEntity.ok().build();
@@ -122,7 +123,7 @@ public class PersonController {
 
     /*Пример использования PATCH метода для частичного обновления данных:*/
     @PatchMapping("/change-user")
-    public boolean changePersonUsingPatchMethod(@RequestBody PersonCredentials personDTO) throws Exception {
+    public boolean changePersonUsingPatchMethod(@Valid @RequestBody PersonCredentials personDTO) throws Exception {
         personDTO.setPassword(encoder.encode(personDTO.getPassword()));
         boolean result = persons.update(personDTO);
         if (!result) {
