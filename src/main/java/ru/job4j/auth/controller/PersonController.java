@@ -123,11 +123,13 @@ public class PersonController {
     /*Пример использования PATCH метода для частичного обновления данных:*/
     @PatchMapping("/change-user")
     public boolean changePersonUsingPatchMethod(@RequestBody PersonCredentials personDTO) throws Exception {
-        boolean result;
         personDTO.setPassword(encoder.encode(personDTO.getPassword()));
-        result = persons.update(personDTO);
+        boolean result = persons.update(personDTO);
         if (!result) {
-            throw new Exception("Person with this credentials is not found.");
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Person with this credentials is not found. Please, check requisites."
+            );
         }
         return result;
     }
