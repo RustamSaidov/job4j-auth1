@@ -2,6 +2,7 @@ package ru.job4j.auth.service;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.job4j.auth.model.Person;
+import ru.job4j.auth.model.PersonCredentials;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +13,7 @@ public interface PersonService {
 
     boolean deleteById(int id);
 
-    boolean update(Person person);
+    boolean update(PersonCredentials personDTO);
 
     Optional<Person> findById(int id);
 
@@ -20,5 +21,5 @@ public interface PersonService {
 
     UserDetails loadUserByUsername(String username);
 
-    Optional<Person> findByLogin(String username);
+    Optional<Person> findByLogin(String login);
 }

@@ -9,12 +9,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import ru.job4j.auth.model.Person;
+import ru.job4j.auth.model.PersonCredentials;
 import ru.job4j.auth.service.PersonService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -122,12 +122,7 @@ public class PersonController {
 
     /*Пример использования PATCH метода для частичного обновления данных:*/
     @PatchMapping("/change-user")
-    public Person changePersonUsingPatchMethod(@RequestBody Person person) throws InvocationTargetException, IllegalAccessException {
-        var current = persons.findByLogin(person.getLogin());
-        if (current.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-        }
-        person.setId(current.get().getId());
-        return persons.save(person);
+    public boolean changePersonUsingPatchMethod(@RequestBody PersonCredentials personDTO) {
+        return persons.update(personDTO);
     }
 }

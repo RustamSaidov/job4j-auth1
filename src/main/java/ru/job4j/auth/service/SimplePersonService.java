@@ -2,12 +2,15 @@ package ru.job4j.auth.service;
 
 import lombok.AllArgsConstructor;
 import net.jcip.annotations.ThreadSafe;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import ru.job4j.auth.model.Person;
+import ru.job4j.auth.model.PersonCredentials;
 import ru.job4j.auth.repository.PersonRepository;
 
 import java.util.List;
@@ -33,8 +36,13 @@ public class SimplePersonService implements PersonService, UserDetailsService {
     }
 
     @Override
-    public boolean update(Person person) {
-        return personRepository.save(person).getId() != 0;
+    public boolean update(PersonCredentials personDTO) {
+        var current = personRepository.findByLogin(personDTO.getLogin());
+        if (current.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        var result = personRepository.save(new Person(current.get().getId(), personDTO.getLogin(), personDTO.getPassword(), current.get().getEmail()));
+        return result != null;
     }
 
     @Override
@@ -49,7 +57,7 @@ public class SimplePersonService implements PersonService, UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        var person = personRepository.findByUsername(username);
+        var person = personRepository.findByLogin(username);
         if (person.isEmpty()) {
             throw new UsernameNotFoundException(username);
         }
@@ -58,6 +66,6 @@ public class SimplePersonService implements PersonService, UserDetailsService {
 
     @Override
     public Optional<Person> findByLogin(String login) {
-        return personRepository.findByUsername(login);
+        return personRepository.findByLogin(login);
     }
 }
