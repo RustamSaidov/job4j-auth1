@@ -1,1 +1,1 @@
-ALTER TABLE person ADD COLUMN email VARCHAR(255);
+alter table person add column email VARCHAR(255);
